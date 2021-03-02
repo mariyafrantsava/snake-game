@@ -3,17 +3,17 @@ import Snake from '../Snake/Snake';
 import Food from '../Food/Food';
 import GameStateMessage from "../GameStateMessage/GameStateMessage";
 import SnakeLength from "../SnakeLength/SnakeLength";
-// import Time from "../Time";
 import StartGame from "../ButtonStartGame/ButtonStartGame";
 import ButtonTryAgain from "../ButtonTryAgain/ButtonTryAgain"
 import ButtonPauseGame from "../ButtonPauseGame/ButtonPauseGame";
 // import Hotkeys from "../Hotkeys/Hotkeys";
-import startMusic from "../../../assets/music/start-music.mp3";
 import Sound from "../Sound/Sound";
 import Footer from "../Footer/Footer"
 import MaxSpeed from "../MaxSpeed/MaxSpeed";
 import CurrentDisplayFood from "../CurrentDisplayFood/CurrentDisplayFood";
 import '../CurrentDisplayFood/CurrentDisplayFood.css';
+import ButtonSettings from "../Settings/ButtonSettings";
+import DivSettings from "../Settings/DivSettings";
 
 const getRandomCoordinates = () => {
   let min = 1;
@@ -31,12 +31,15 @@ const initialState = {
     [2, 0]
   ],
   intervalId: null,
+  isSettingsShow: false,
   isGameStart: false,
   isGamePause: false,
   isScoreHidden: true,
   startBtnText: ' Start game',
   soundAction: '',
-  time: 0
+  isPlayMusic: true,
+  isPlaySoundEffect: true,
+  musicVolume: 0.7
 }
 
 class App extends Component {
@@ -63,22 +66,22 @@ class App extends Component {
   }
 
   startGame = () => {
-      this.collapseWarning = "";
-      this.setState( {
-          speed: 150,
-          direction: 'RIGHT',
-          snakeDots: [
-            [0, 0],
-            [2, 0]
-          ],
-          intervalId: setInterval(this.moveSnake, this.state.speed),
-          isGameStart: true,
-          isGamePause: false,
-          isScoreHidden: true,
-          startBtnText: ' Start a new game',
-          soundAction: 'play'
-      });
-      document.onkeydown = this.onKeyDown;
+    this.collapseWarning = "";
+    this.setState({
+      speed: 150,
+      direction: 'RIGHT',
+      snakeDots: [
+        [0, 0],
+        [2, 0]
+      ],
+      intervalId: setInterval(this.moveSnake, this.state.speed),
+      isGameStart: true,
+      isGamePause: false,
+      isScoreHidden: true,
+      startBtnText: ' Start a new game',
+      soundAction: 'play'
+    });
+    document.onkeydown = this.onKeyDown;
   };
 
   pauseGame = () => {
@@ -211,11 +214,49 @@ class App extends Component {
     });
   }
 
+  toggleShowSettings = () => {
+    this.setState(({ isSettingsShow }) => {
+      return {
+        isSettingsShow: !isSettingsShow
+      };
+    });
+  }
+
+  togglePlayMusic = () => {
+    this.setState(({ isPlayMusic }) => {
+      return {
+        isPlayMusic: !isPlayMusic
+      };
+    });
+  }
+
+  togglePlaySoundEffect = () => {
+    this.setState(({ isPlaySoundEffect }) => {
+      return {
+        isPlaySoundEffect: !isPlaySoundEffect
+      };
+    });
+  }
+
+  setMusicVolume = value => {
+    this.setState(({ musicVolume }) => {
+      return {
+        musicVolume: value
+      };
+    });
+  }
+
   render() {
+    const btnMusicText = this.state.isPlayMusic ? 'On' : 'Off';
+    const btnSoundEffectText = this.state.isPlaySoundEffect ? 'On' : 'Off';
+
     return (
       <div className="main-block">
 
-        <Sound action={this.state.soundAction} />
+        <Sound action={this.state.soundAction}
+          isPlayMusic={this.state.isPlayMusic}
+          isPlaySoundEffect={this.state.isPlaySoundEffect}
+          musicVolume={this.state.musicVolume} />
         <div className="buttons-area">
           <div>
             <ButtonPauseGame
@@ -231,34 +272,46 @@ class App extends Component {
           </div>
           <div className="currentDisplayAll">
             <CurrentDisplayFood
-                isHidden={!this.state.isGameStart}
-                snakeDots={this.state.snakeDots.length - 2}/>
+              isHidden={!this.state.isGameStart}
+              snakeDots={this.state.snakeDots.length - 2} />
             <MaxSpeed
-                speedStyle="currentDisplayValue"
-                isHidden={!this.state.isGameStart}
-                speed={this.state.snakeDots.length*10-10}
+              speedStyle="currentDisplayValue"
+              isHidden={!this.state.isGameStart}
+              speed={this.state.snakeDots.length * 10 - 10}
             />
           </div>
+
+          <ButtonSettings toggleShowSettings={this.toggleShowSettings}
+            setMusicVolume={this.setMusicVolume} />
+
           {/* <Hotkeys /> */}
         </div>
 
-        <div className="game-area">
+        <DivSettings isSettingsShow={!this.state.isSettingsShow}
+          togglePlayMusic={this.togglePlayMusic}
+          btnMusicText={btnMusicText}
+          togglePlaySoundEffect={this.togglePlaySoundEffect}
+          btnSoundEffectText={btnSoundEffectText} />
+
+        <div className="game-area" hidden={this.state.isSettingsShow}>
           <Snake snakeDots={this.state.snakeDots} />
           <Food dot={this.state.food} />
+
           <div className="results">
             <GameStateMessage
               isHidden={this.state.isScoreHidden}
               text={this.state.isGameStart ? "Pause..." : "Game Over!"}
               collapseWarning={this.collapseWarning} />
+
             <SnakeLength
               isHidden={this.state.isScoreHidden || this.state.isGamePause}
               snakeDots={this.state.snakeDots.length}
               time={this.state.time} />
             <MaxSpeed
-                speedStyle="gameOver"
-                isHidden={this.state.isScoreHidden || this.state.isGamePause}
-                speed={this.state.snakeDots.length*10-10}
-                time={this.state.time} />
+              speedStyle="gameOver"
+              isHidden={this.state.isScoreHidden || this.state.isGamePause}
+              speed={this.state.snakeDots.length * 10 - 10}
+              time={this.state.time} />
             <StartGame
               // text=' Start a new game'
               text={this.state.startBtnText}

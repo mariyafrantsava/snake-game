@@ -9,15 +9,19 @@ export default class Sound extends Component {
     audioEat = new Audio(eatMusic);
     audioGameOver = new Audio(gameOver);
 
-    play = () => {
-        this.audio.loop = true;
-        this.audio.volume = 0.7;
-        this.audio.play();
+    play = (isPlayMusic, musicVolume) => {
+        if (isPlayMusic) {
+            this.audio.loop = true;
+            this.audio.volume = musicVolume;
+            this.audio.play();
+        }
     }
 
-    playEat = () => {
-        this.audioEat.loop = false;
-        this.audioEat.play();
+    playEat = (isPlaySoundEffect) => {
+        if (isPlaySoundEffect) {
+            this.audioEat.loop = false;
+            this.audioEat.play();
+        }
     }
 
     pause = () => {
@@ -31,11 +35,11 @@ export default class Sound extends Component {
     }
 
     render() {
-        const { action } = this.props;
+        const { action, isPlayMusic, isPlaySoundEffect, musicVolume } = this.props;
 
         switch (action) {
             case 'play' :
-                this.play();
+                this.play(isPlayMusic, musicVolume);
                 break;
             case 'pause' :
                 this.pause();
@@ -44,7 +48,7 @@ export default class Sound extends Component {
                 this.stop();
                 break;
             case 'playEat' :
-                this.playEat();
+                this.playEat(isPlaySoundEffect);
                 break;
         }
 
