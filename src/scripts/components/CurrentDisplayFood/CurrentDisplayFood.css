@@ -1,0 +1,13 @@
+.currentDisplayValue{
+    color: white;
+    padding: .5rem 1rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    border-radius: .3rem;
+    background-color: #007bff80;
+    width: 14rem;
+    margin: .6rem .6rem;
+}
+.currentDisplayAll{
+    margin-top: 2rem;
+}

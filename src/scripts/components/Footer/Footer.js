@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Footer.css';
-import imgGitHub from './GitHub.png';
-import imgRS from './rs-school.svg';
+import imgGitHub from '../../../assets/images/GitHub.png';
+import imgRS from '../../../assets/images/rs-school.svg';
 
 export default class Footer extends Component{
     render() {

@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
 }
-.main-block{
+body{
   font-family: 'Krona One', sans-serif;
   background-size: cover;
   background-image: url("./assets/images/76588.jpg");

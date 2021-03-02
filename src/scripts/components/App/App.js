@@ -11,6 +11,9 @@ import ButtonPauseGame from "../ButtonPauseGame/ButtonPauseGame";
 import startMusic from "../../../assets/music/start-music.mp3";
 import Sound from "../Sound/Sound";
 import Footer from "../Footer/Footer"
+import MaxSpeed from "../MaxSpeed/MaxSpeed";
+import CurrentDisplayFood from "../CurrentDisplayFood/CurrentDisplayFood";
+import '../CurrentDisplayFood/CurrentDisplayFood.css';
 
 const getRandomCoordinates = () => {
   let min = 1;
@@ -214,16 +217,28 @@ class App extends Component {
 
         <Sound action={this.state.soundAction} />
         <div className="buttons-area">
-          <ButtonPauseGame
-            text={this.state.isGamePause ? " Resume game" : " Pause game"}
-            isHidden={!this.state.isGameStart}
-            gameAction={this.state.isGamePause ? this.resumeGame : this.pauseGame}
-          />
-          <ButtonTryAgain
-            text=' Try again'
-            isHidden={!this.state.isGameStart}
-            restartGame={this.restartGame}
-          />
+          <div>
+            <ButtonPauseGame
+              text={this.state.isGamePause ? " Resume game" : " Pause game"}
+              isHidden={!this.state.isGameStart}
+              gameAction={this.state.isGamePause ? this.resumeGame : this.pauseGame}
+            />
+            <ButtonTryAgain
+              text=' Try again'
+              isHidden={!this.state.isGameStart}
+              restartGame={this.restartGame}
+            />
+          </div>
+          <div className="currentDisplayAll">
+            <CurrentDisplayFood
+                isHidden={!this.state.isGameStart}
+                snakeDots={this.state.snakeDots.length - 2}/>
+            <MaxSpeed
+                speedStyle="currentDisplayValue"
+                isHidden={!this.state.isGameStart}
+                speed={this.state.snakeDots.length*10-10}
+            />
+          </div>
           {/* <Hotkeys /> */}
         </div>
 
@@ -239,20 +254,22 @@ class App extends Component {
               isHidden={this.state.isScoreHidden || this.state.isGamePause}
               snakeDots={this.state.snakeDots.length}
               time={this.state.time} />
-            {/*<Time isShow={this.state.isGameStart}/>*/}
+            <MaxSpeed
+                speedStyle="gameOver"
+                isHidden={this.state.isScoreHidden || this.state.isGamePause}
+                speed={this.state.snakeDots.length*10-10}
+                time={this.state.time} />
             <StartGame
               // text=' Start a new game'
               text={this.state.startBtnText}
               isShow={this.state.isGameStart}
               startGame={this.startGame}
             />
-
           </div>
         </div>
-
-          <Footer />
-
+        <Footer />
       </div>
+
     );
   }
 

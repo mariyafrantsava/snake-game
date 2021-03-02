@@ -1,4 +1,5 @@
 import React from 'react';
+import './GameStateMessage.css';
 
 export default ({isHidden, text, collapseWarning}) => {
     return (
