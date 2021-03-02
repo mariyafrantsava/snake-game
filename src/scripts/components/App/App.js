@@ -10,6 +10,7 @@ import ButtonPauseGame from "../ButtonPauseGame/ButtonPauseGame";
 // import Hotkeys from "../Hotkeys/Hotkeys";
 import startMusic from "../../../assets/music/start-music.mp3";
 import Sound from "../Sound/Sound";
+import Footer from "../Footer/Footer"
 
 const getRandomCoordinates = () => {
   let min = 1;
@@ -209,7 +210,8 @@ class App extends Component {
 
   render() {
     return (
-      <div>
+      <div className="main-block">
+
         <Sound action={this.state.soundAction} />
         <div className="buttons-area">
           <ButtonPauseGame
@@ -225,7 +227,7 @@ class App extends Component {
           {/* <Hotkeys /> */}
         </div>
 
-        <div className="game-area" id="canvas">
+        <div className="game-area">
           <Snake snakeDots={this.state.snakeDots} />
           <Food dot={this.state.food} />
           <div className="results">
@@ -244,8 +246,12 @@ class App extends Component {
               isShow={this.state.isGameStart}
               startGame={this.startGame}
             />
+
           </div>
         </div>
+
+          <Footer />
+
       </div>
     );
   }
