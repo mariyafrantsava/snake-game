@@ -1,11 +1,12 @@
 import React from 'react';
 
-export default ({toggleShowSettings}) => {
+export default ({isHidden, toggleShowSettings}) => {
     return (
         <button
-            className="settings btn btn-primary btn-lg"
+            className="button-setting startGame btn btn-primary btn-lg"
+            hidden={isHidden}
             onClick={toggleShowSettings}>
-            <i className="fa fa-info" aria-hidden="true"/>
+            <i className="fa fa-cog" aria-hidden="true"/>
             <span> Settings</span>
         </button>
     )

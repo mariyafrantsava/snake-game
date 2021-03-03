@@ -257,19 +257,27 @@ class App extends Component {
           isPlayMusic={this.state.isPlayMusic}
           isPlaySoundEffect={this.state.isPlaySoundEffect}
           musicVolume={this.state.musicVolume} />
+
         <div className="buttons-area">
-          <div>
+
+          <div className="buttonsMain-area">
             <ButtonPauseGame
               text={this.state.isGamePause ? " Resume game" : " Pause game"}
-              isHidden={!this.state.isGameStart}
-              gameAction={this.state.isGamePause ? this.resumeGame : this.pauseGame}
-            />
+              isHidden={!this.state.isGameStart || this.state.isSettingsShow}
+              gameAction={this.state.isGamePause ? this.resumeGame : this.pauseGame}/>
             <ButtonTryAgain
               text=' Try again'
-              isHidden={!this.state.isGameStart}
-              restartGame={this.restartGame}
-            />
+              isHidden={!this.state.isGameStart || this.state.isSettingsShow}
+              restartGame={this.restartGame}/>
           </div>
+          <div>
+            <ButtonSettings
+                toggleShowSettings={this.toggleShowSettings}
+                isHidden={this.state.isGameStart && !this.state.isGamePause}
+                setMusicVolume={this.setMusicVolume} />
+          </div>
+        </div>
+
           <div className="currentDisplayAll">
             <CurrentDisplayFood
               isHidden={!this.state.isGameStart}
@@ -277,15 +285,10 @@ class App extends Component {
             <MaxSpeed
               speedStyle="currentDisplayValue"
               isHidden={!this.state.isGameStart}
-              speed={this.state.snakeDots.length * 10 - 10}
-            />
+              speed={this.state.snakeDots.length * 10 - 10}/>
           </div>
-
-          <ButtonSettings toggleShowSettings={this.toggleShowSettings}
-            setMusicVolume={this.setMusicVolume} />
-
           {/* <Hotkeys /> */}
-        </div>
+
 
         <DivSettings isSettingsShow={!this.state.isSettingsShow}
           togglePlayMusic={this.togglePlayMusic}

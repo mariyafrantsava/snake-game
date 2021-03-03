@@ -34,7 +34,12 @@ body{
   background-color: #ffffff36;
 }
 .buttons-area{
-  height: 6.4rem;
+  height: 8.4rem;
+  display: flex;
+  justify-content: space-between;
+}
+.buttonsMain-area{
+  width: fit-content;
 }
 .snake-dot {
   position: absolute;
@@ -51,5 +56,8 @@ body{
   background-color: red;
   border: 1px solid #fff;
   z-index: 1;
+}
+.btnPause-Resume{
+  width: 16.6rem;
 }
 

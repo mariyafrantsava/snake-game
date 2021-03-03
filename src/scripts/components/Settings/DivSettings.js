@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import './Settings.css';
 
 export default class DivSettings extends Component {
 
@@ -8,19 +9,43 @@ export default class DivSettings extends Component {
 
         return (
             <div className="settings" hidden={isSettingsShow}>
-                <span>Settings:</span>
+                <span className="settings-title">Settings:</span>
                 <br/>
-                <span>Music </span>
-                <button className="btn btn-primary btn-lg"
+
+                <span className="setting">Music </span>
+                <button className="startGame btn btn-primary btn-lg"
                     onClick={togglePlayMusic}>
                     {btnMusicText}</button>
+
                 <input id="musicVolum" type="range" min="0.1" max="1" step="0.1"
                     onChange={()=>{console.log(document.getElementById("musicVolum").value)}}/>
                 <br/>
-                <span>Sound effect </span>
-                <button className="btn btn-primary btn-lg"
+
+                <span className="setting"> Sound effect </span>
+                <button className="startGame btn btn-primary btn-lg"
                         onClick={togglePlaySoundEffect}>
                     {btnSoundEffectText}</button>
+
+                <span className="setting"> Speed </span>
+                <button className="startGame btn btn-primary btn-lg"
+                    //     onClick={togglePlaySoundEffect}
+                >
+                     {/*{btnSoundEffectText}*/}
+                </button>
+
+                <span className="setting"> Size of field </span>
+                <button className="startGame btn btn-primary btn-lg"
+                    //     onClick={togglePlaySoundEffect}
+                >
+                    {/*{btnSoundEffectText}*/}
+                </button>
+
+                <span className="setting"> Hole </span>
+                <button className="startGame btn btn-primary btn-lg"
+                    //     onClick={togglePlaySoundEffect}
+                >
+                    {/*{btnSoundEffectText}*/}
+                </button>
             </div>
         );
     };

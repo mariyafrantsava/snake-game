@@ -10,4 +10,6 @@
 }
 .currentDisplayAll{
     margin-top: 2rem;
+    position: absolute;
+    margin: 1.5rem auto;
 }
