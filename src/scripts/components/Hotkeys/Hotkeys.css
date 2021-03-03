@@ -1,0 +1,26 @@
+.hotkeys{
+    color: white;
+    margin: .3rem auto;
+    padding: 3rem;
+    background-color: #00000091;
+    width: -moz-fit-content;
+    width: fit-content;
+    font-size: larger;
+    line-height: 2.5;
+    position: absolute;
+    right: 1rem;
+}
+.hotkeys ul li{
+    list-style-type: none;
+}
+
+.hotkeys span{
+    margin-left: 1rem;
+}
+.hotkeys i{
+    color: dodgerblue;
+}
+
+.hotkeysLetters{
+    color: #be90f8;
+}

@@ -6,7 +6,7 @@ import SnakeLength from "../SnakeLength/SnakeLength";
 import StartGame from "../ButtonStartGame/ButtonStartGame";
 import ButtonTryAgain from "../ButtonTryAgain/ButtonTryAgain"
 import ButtonPauseGame from "../ButtonPauseGame/ButtonPauseGame";
-// import Hotkeys from "../Hotkeys/Hotkeys";
+import Hotkeys from "../Hotkeys/Hotkeys";
 import Sound from "../Sound/Sound";
 import Footer from "../Footer/Footer"
 import MaxSpeed from "../MaxSpeed/MaxSpeed";
@@ -14,6 +14,7 @@ import CurrentDisplayFood from "../CurrentDisplayFood/CurrentDisplayFood";
 import '../CurrentDisplayFood/CurrentDisplayFood.css';
 import ButtonSettings from "../Settings/ButtonSettings";
 import DivSettings from "../Settings/DivSettings";
+import HotkeysDisplay from "../Hotkeys/HotkeysDisplay";
 
 const getRandomCoordinates = () => {
   let min = 1;
@@ -39,7 +40,8 @@ const initialState = {
   soundAction: '',
   isPlayMusic: true,
   isPlaySoundEffect: true,
-  musicVolume: 0.7
+  musicVolume: 0.7,
+  isHotkeysShow: false,
 }
 
 class App extends Component {
@@ -48,6 +50,7 @@ class App extends Component {
   collapseWarning = '';
 
   componentDidMount() {
+    document.onkeydown = this.onKeyDownHotkeys;
     if (this.state.isGameStart) {
       this.setState({
         intervalId: setInterval(this.moveSnake, this.state.speed)
@@ -122,8 +125,53 @@ class App extends Component {
       case 39:
         this.setState({ direction: 'RIGHT' });
         break;
+      case 78:
+        if(this.state.isGameStart){
+          this.restartGame();
+        }else{
+          this.startGame();
+        }
+        break;
+      case 80:
+        if(this.state.isGameStart) {
+          if (this.state.isGamePause) {
+            this.resumeGame();
+          } else {
+            this.pauseGame();
+          }
+        }
+        break;
+      case 83:
+      if(this.state.isGameStart && this.state.isGamePause){
+        this.toggleShowSettings();
+      }
+        break;
+      case 72:
+        if(this.state.isGameStart && this.state.isGamePause){
+          this.toggleShowHotkeys();
+        }
+        break;
       default:
         this.setState({ direction: 'RIGHT' });
+        break;
+    }
+  }
+
+  onKeyDownHotkeys = (event) =>{
+    event = event || window.event;
+    switch (event.keyCode) {
+      case 78:
+        this.startGame();
+        break;
+      case 83:
+        if(this.state.isGameStart && this.state.isGamePause){
+        this.toggleShowSettings();
+        }
+        break;
+      case 72:
+        if(this.state.isGameStart && this.state.isGamePause){
+          this.toggleShowHotkeys();
+        }
         break;
     }
   }
@@ -246,11 +294,21 @@ class App extends Component {
     });
   }
 
+  toggleShowHotkeys = () => {
+    this.setState(({ isHotkeysShow }) => {
+      return {
+        isHotkeysShow: !isHotkeysShow
+      };
+    });
+    console.log(this.state.isHotkeysShow);
+  }
+
   render() {
     const btnMusicText = this.state.isPlayMusic ? 'On' : 'Off';
     const btnSoundEffectText = this.state.isPlaySoundEffect ? 'On' : 'Off';
 
     return (
+        <div className="app-wrapper">
       <div className="main-block">
 
         <Sound action={this.state.soundAction}
@@ -270,12 +328,19 @@ class App extends Component {
               isHidden={!this.state.isGameStart || this.state.isSettingsShow}
               restartGame={this.restartGame}/>
           </div>
+
           <div>
             <ButtonSettings
                 toggleShowSettings={this.toggleShowSettings}
                 isHidden={this.state.isGameStart && !this.state.isGamePause}
                 setMusicVolume={this.setMusicVolume} />
+            <Hotkeys
+                toggleShowHotkeys={this.toggleShowHotkeys}
+                isHidden={this.state.isGameStart && !this.state.isGamePause}/>
+            <HotkeysDisplay
+                isHotkeysShow={!this.state.isHotkeysShow}/>
           </div>
+
         </div>
 
           <div className="currentDisplayAll">
@@ -287,7 +352,6 @@ class App extends Component {
               isHidden={!this.state.isGameStart}
               speed={this.state.snakeDots.length * 10 - 10}/>
           </div>
-          {/* <Hotkeys /> */}
 
 
         <DivSettings isSettingsShow={!this.state.isSettingsShow}
@@ -322,6 +386,7 @@ class App extends Component {
               startGame={this.startGame}
             />
           </div>
+        </div>
         </div>
         <Footer />
       </div>

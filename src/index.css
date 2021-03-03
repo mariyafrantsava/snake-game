@@ -18,6 +18,18 @@ body{
   font-size: xx-large;
   color: white;
 }
+.main-block{
+  min-height: calc(100vh - 80px);
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
 
 .btn-primary:hover {
   color: #fff;

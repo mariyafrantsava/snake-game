@@ -25,6 +25,7 @@ export default class DivSettings extends Component {
                 <button className="startGame btn btn-primary btn-lg"
                         onClick={togglePlaySoundEffect}>
                     {btnSoundEffectText}</button>
+                <br/>
 
                 <span className="setting"> Speed </span>
                 <button className="startGame btn btn-primary btn-lg"
@@ -32,6 +33,7 @@ export default class DivSettings extends Component {
                 >
                      {/*{btnSoundEffectText}*/}
                 </button>
+                <br/>
 
                 <span className="setting"> Size of field </span>
                 <button className="startGame btn btn-primary btn-lg"
@@ -39,6 +41,7 @@ export default class DivSettings extends Component {
                 >
                     {/*{btnSoundEffectText}*/}
                 </button>
+                <br/>
 
                 <span className="setting"> Hole </span>
                 <button className="startGame btn btn-primary btn-lg"
