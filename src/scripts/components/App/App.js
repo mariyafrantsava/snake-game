@@ -25,7 +25,10 @@ const getRandomCoordinates = () => {
 }
 const initialState = {
   food: getRandomCoordinates(),
-  speed: 150,
+  startSpeed: 100,
+  speed: 100,
+  startSpeedRate: 1.5,
+  speedRate: 1.5,
   direction: 'RIGHT',
   snakeDots: [
     [0, 0],
@@ -41,6 +44,7 @@ const initialState = {
   isPlayMusic: true,
   isPlaySoundEffect: true,
   musicVolume: 0.7,
+  soundEffectVolume: 0.7,
   isHotkeysShow: false,
 }
 
@@ -71,7 +75,8 @@ class App extends Component {
   startGame = () => {
     this.collapseWarning = "";
     this.setState({
-      speed: 150,
+      speed: this.state.startSpeed,
+      speedRate: this.state.startSpeedRate,
       direction: 'RIGHT',
       snakeDots: [
         [0, 0],
@@ -286,10 +291,31 @@ class App extends Component {
     });
   }
 
-  setMusicVolume = value => {
-    this.setState(({ musicVolume }) => {
+  toggleSpeed = () => {
+    this.setState( () => {
+      let newSpeedRate = document.querySelector("#speed").value;
+      let newSpeed = 100 * newSpeedRate - (this.state.snakeDots.length * 10 - 20);
       return {
-        musicVolume: value
+        startSpeedRate: newSpeedRate,
+        startSpeed: 100 * newSpeedRate,
+        speedRate: newSpeedRate,
+        speed: newSpeed
+      };
+    });
+  }
+
+  setMusicVolume = () => {
+    this.setState( () => {
+      return {
+        musicVolume: document.querySelector("#musicVolume").value
+      };
+    });
+  }
+
+  setSoundEffectVolume = () => {
+    this.setState( () => {
+      return {
+        soundEffectVolume: document.querySelector("#soundEffectVolume").value
       };
     });
   }
@@ -314,7 +340,8 @@ class App extends Component {
         <Sound action={this.state.soundAction}
           isPlayMusic={this.state.isPlayMusic}
           isPlaySoundEffect={this.state.isPlaySoundEffect}
-          musicVolume={this.state.musicVolume} />
+          musicVolume={this.state.musicVolume}
+          soundEffectVolume={this.state.soundEffectVolume} />
 
         <div className="buttons-area">
 
@@ -350,15 +377,20 @@ class App extends Component {
             <MaxSpeed
               speedStyle="currentDisplayValue"
               isHidden={!this.state.isGameStart}
-              speed={this.state.snakeDots.length * 10 - 10}/>
+              speed={(this.state.snakeDots.length * 10 - 10) * this.state.speedRate}/>
           </div>
 
-
         <DivSettings isSettingsShow={!this.state.isSettingsShow}
+          musicVolume={this.state.musicVolume}
+          soundEffectVolume={this.state.soundEffectVolume}
           togglePlayMusic={this.togglePlayMusic}
           btnMusicText={btnMusicText}
           togglePlaySoundEffect={this.togglePlaySoundEffect}
-          btnSoundEffectText={btnSoundEffectText} />
+          btnSoundEffectText={btnSoundEffectText}
+          setMusicVolume={this.setMusicVolume}
+          setSoundEffectVolume={this.setSoundEffectVolume}
+          speedRate={this.state.speedRate}
+          toggleSpeed={this.toggleSpeed}/>
 
         <div className="game-area" hidden={this.state.isSettingsShow}>
           <Snake snakeDots={this.state.snakeDots} />
@@ -377,7 +409,7 @@ class App extends Component {
             <MaxSpeed
               speedStyle="gameOver"
               isHidden={this.state.isScoreHidden || this.state.isGamePause}
-              speed={this.state.snakeDots.length * 10 - 10}
+              speed={(this.state.snakeDots.length * 10 - 10) * this.state.speedRate}
               time={this.state.time} />
             <StartGame
               // text=' Start a new game'

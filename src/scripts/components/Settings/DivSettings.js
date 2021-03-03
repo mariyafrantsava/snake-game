@@ -2,10 +2,10 @@ import React, {Component} from 'react';
 import './Settings.css';
 
 export default class DivSettings extends Component {
-
     render() {
-        const {isSettingsShow, togglePlayMusic, btnMusicText,
-            togglePlaySoundEffect ,btnSoundEffectText} = this.props;
+        const {isSettingsShow, togglePlayMusic, btnMusicText, musicVolume, soundEffectVolume,
+            togglePlaySoundEffect ,btnSoundEffectText, setMusicVolume, setSoundEffectVolume,
+            toggleSpeed} = this.props;
 
         return (
             <div className="settings" hidden={isSettingsShow}>
@@ -17,38 +17,25 @@ export default class DivSettings extends Component {
                     onClick={togglePlayMusic}>
                     {btnMusicText}</button>
 
-                <input id="musicVolum" type="range" min="0.1" max="1" step="0.1"
-                    onChange={()=>{console.log(document.getElementById("musicVolum").value)}}/>
+                <input id="musicVolume" type="range" min="0.1" max="1" step="0.1" defaultValue={musicVolume}
+                       onChange={setMusicVolume}/>
                 <br/>
 
                 <span className="setting"> Sound effect </span>
                 <button className="startGame btn btn-primary btn-lg"
                         onClick={togglePlaySoundEffect}>
                     {btnSoundEffectText}</button>
+
+                <input id="soundEffectVolume" type="range" min="0.1" max="1" step="0.1" defaultValue={soundEffectVolume}
+                       onChange={setSoundEffectVolume}/>
                 <br/>
 
                 <span className="setting"> Speed </span>
-                <button className="startGame btn btn-primary btn-lg"
-                    //     onClick={togglePlaySoundEffect}
-                >
-                     {/*{btnSoundEffectText}*/}
-                </button>
-                <br/>
-
-                <span className="setting"> Size of field </span>
-                <button className="startGame btn btn-primary btn-lg"
-                    //     onClick={togglePlaySoundEffect}
-                >
-                    {/*{btnSoundEffectText}*/}
-                </button>
-                <br/>
-
-                <span className="setting"> Hole </span>
-                <button className="startGame btn btn-primary btn-lg"
-                    //     onClick={togglePlaySoundEffect}
-                >
-                    {/*{btnSoundEffectText}*/}
-                </button>
+                <select id="speed" onChange={toggleSpeed}>
+                    <option value="2">Low</option>
+                    <option value="1.5" selected>Norm</option>
+                    <option value="1">High</option>
+                </select>
             </div>
         );
     };

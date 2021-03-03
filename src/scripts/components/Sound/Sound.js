@@ -17,9 +17,10 @@ export default class Sound extends Component {
         }
     }
 
-    playEat = (isPlaySoundEffect) => {
+    playEat = (isPlaySoundEffect, soundEffectVolume) => {
         if (isPlaySoundEffect) {
             this.audioEat.loop = false;
+            this.audioEat.volume = soundEffectVolume;
             this.audioEat.play();
         }
     }
@@ -28,14 +29,17 @@ export default class Sound extends Component {
         this.audio.pause();
     }
 
-    stop = () => {
-        this.audio.pause();
-        this.audio.currentTime = 0;
-        this.audioGameOver.play();
+    stop = (isPlaySoundEffect, soundEffectVolume) => {
+        if (isPlaySoundEffect) {
+            this.audio.pause();
+            this.audio.currentTime = 0;
+            this.audioGameOver.volume = soundEffectVolume;
+            this.audioGameOver.play();
+        }
     }
 
     render() {
-        const { action, isPlayMusic, isPlaySoundEffect, musicVolume } = this.props;
+        const { action, isPlayMusic, isPlaySoundEffect, musicVolume, soundEffectVolume } = this.props;
 
         switch (action) {
             case 'play' :
@@ -45,10 +49,10 @@ export default class Sound extends Component {
                 this.pause();
                 break;
             case 'stop' :
-                this.stop();
+                this.stop(isPlaySoundEffect, soundEffectVolume);
                 break;
             case 'playEat' :
-                this.playEat(isPlaySoundEffect);
+                this.playEat(isPlaySoundEffect, soundEffectVolume);
                 break;
         }
 
