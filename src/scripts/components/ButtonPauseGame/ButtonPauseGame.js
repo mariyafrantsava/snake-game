@@ -1,13 +1,14 @@
 import React from 'react';
 
-export default ({isHidden, text, gameAction}) => {
-        return (
+ const pauseGame = ({isHidden, text, gameAction}) => {
+    return (
         <button
             className="startGame btn btn-primary btn-lg btnPause-Resume"
             hidden={isHidden}
-            onClick={ gameAction }>
+            onClick={gameAction}>
             <i className="fa fa-pause" aria-hidden="true"/>
             <span>{text}</span>
         </button>
     )
 }
+export default pauseGame;

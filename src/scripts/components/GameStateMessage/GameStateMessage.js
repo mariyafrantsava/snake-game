@@ -1,13 +1,14 @@
 import React from 'react';
 import './GameStateMessage.css';
 
-export default ({isHidden, text, collapseWarning}) => {
+const putStateMessage = ({isHidden, text, collapseWarning}) => {
     return (
         <div
             className="gameOver"
-            hidden={ isHidden } >
-            { text }
-            <p>{ collapseWarning }</p>
+            hidden={isHidden}>
+            {text}
+            <p>{collapseWarning}</p>
         </div>
     )
 }
+export default putStateMessage;

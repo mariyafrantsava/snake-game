@@ -1,4 +1,4 @@
-.hotkeys{
+.hotkeys {
     color: white;
     margin: .3rem auto;
     padding: 3rem;
@@ -10,17 +10,19 @@
     position: absolute;
     right: 1rem;
 }
-.hotkeys ul li{
+
+.hotkeys ul li {
     list-style-type: none;
 }
 
-.hotkeys span{
+.hotkeys span {
     margin-left: 1rem;
 }
-.hotkeys i{
+
+.hotkeys i {
     color: dodgerblue;
 }
 
-.hotkeysLetters{
+.hotkeysLetters {
     color: #be90f8;
 }

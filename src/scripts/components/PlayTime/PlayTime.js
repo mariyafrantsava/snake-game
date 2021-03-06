@@ -1,11 +1,12 @@
 import React from 'react';
 
-export default ({isShow, time}) => {
-    return (
-        <div
-            className="gameOver"
-            hidden={isShow} >
-            Time of game: {time}
-        </div>
-    )
+const playTime = ({isShow, time}) => {
+  return (
+    <div
+      className="gameOver"
+      hidden={isShow}>
+      Time of game: {time}
+    </div>
+  )
 }
+export default playTime;

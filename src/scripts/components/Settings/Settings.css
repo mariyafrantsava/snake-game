@@ -1,4 +1,4 @@
-.settings{
+.settings {
     position: relative;
     margin: .3rem auto;
     background-color: #00000091;
@@ -6,14 +6,17 @@
     width: fit-content;
     border: 1rem solid #47525dcc;
 }
-.setting{
+
+.setting {
     color: white;
     font-size: larger;
 }
-.settings-title{
+
+.settings-title {
     color: #be90f8;
     font-size: x-large;
 }
-.button-setting{
+
+.button-setting {
     width: 11rem;
 }

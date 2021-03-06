@@ -1,1 +1,14 @@
-.startGame{    background-color: #b700ff;    border-color: #b700ff;    margin: .5rem;}.start{    margin-top: 5rem;}.start:hover{    transform: scale(1.5);    transition: 2s;}
+.startGame {
+    background-color: #b700ff;
+    border-color: #b700ff;
+    margin: .5rem;
+}
+
+.start {
+    margin-top: 5rem;
+}
+
+.start:hover {
+    transform: scale(1.5);
+    transition: 2s;
+}

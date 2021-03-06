@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default (props) => {
+const createSnake = (props) => {
   return (
     <div>
       {props.snakeDots.map((dot, i) => {
@@ -13,8 +13,6 @@ export default (props) => {
         )
       })}
     </div>
-    // <div className="shake-dot" style={{ top: 0, left: 0 }}></div>
-    // <div className="shake-dot" style={{ top: 0, left: '2%' }}></div>
-    // <div className="shake-dot" style={{ top: 0, left: '4%' }}></div>
   )
 }
+export default createSnake;

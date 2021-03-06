@@ -1,4 +1,4 @@
-footer{
+footer {
     left: 0;
     bottom: 0;
     width: 100%;
@@ -10,9 +10,11 @@ footer{
     min-height: 4.5rem;
     color: #000;
 }
+
 footer .author {
     margin: 0 40px 0 5px;
 }
+
 footer .authors .gh-link {
     margin: 0 10px;
     font-size: 1.7rem;
@@ -20,6 +22,7 @@ footer .authors .gh-link {
     transition: .5s ease-in-out;
     text-shadow: 0 0.1em 20px #000, 0.05em -0.03em 0 #000, 0.05em 0.005em 0 #000, 0em 0.08em 0 #000, 0.05em 0.08em 0 #000, 0px -0.03em 0 #000, -0.03em -0.03em 0 #000, -0.03em 0.08em 0 #000, -0.03em 0 0 #000;
 }
+
 footer .rss-logo {
     height: 25px;
 }

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Snake from '../Snake/Snake';
 import Food from '../Food/Food';
 import GameStateMessage from "../GameStateMessage/GameStateMessage";
@@ -15,12 +15,13 @@ import '../CurrentDisplayFood/CurrentDisplayFood.css';
 import ButtonSettings from "../Settings/ButtonSettings";
 import DivSettings from "../Settings/DivSettings";
 import HotkeysDisplay from "../Hotkeys/HotkeysDisplay";
+import Statistic from "../Statistic/Statistic";
 
 const getRandomCoordinates = () => {
-  let min = 1;
-  let max = 98;
-  let x = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 2;
-  let y = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 2;
+  const min = 1;
+  const max = 98;
+  const x = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 2;
+  const y = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 2;
   return [x, y];
 }
 const initialState = {
@@ -46,6 +47,11 @@ const initialState = {
   musicVolume: 0.7,
   soundEffectVolume: 0.7,
   isHotkeysShow: false,
+  statisticData: []
+}
+
+function parseToBool(value) {
+  return value === 'true';
 }
 
 class App extends Component {
@@ -54,11 +60,15 @@ class App extends Component {
   collapseWarning = '';
 
   componentDidMount() {
+    if (localStorage.length) {
+      clearInterval(this.state.intervalId);
+      this.readFromLocalStorage();
+    }
     document.onkeydown = this.onKeyDownHotkeys;
     if (this.state.isGameStart) {
       this.setState({
-        intervalId: setInterval(this.moveSnake, this.state.speed)
-      }
+          intervalId: setInterval(this.moveSnake, this.state.speed)
+        }
       )
       document.onkeydown = this.onKeyDown;
     }
@@ -70,9 +80,11 @@ class App extends Component {
       this.checkIfCollapsed();
       this.checkIfEat();
     }
+    this.saveInLocalStorage();
   }
 
   startGame = () => {
+    clearInterval(this.state.intervalId);
     this.collapseWarning = "";
     this.setState({
       speed: this.state.startSpeed,
@@ -99,6 +111,7 @@ class App extends Component {
       isGamePause: true,
       soundAction: 'pause'
     });
+    document.onkeydown = this.onKeyDownHotkeys;
   }
 
   resumeGame = () => {
@@ -108,6 +121,7 @@ class App extends Component {
       isGamePause: false,
       soundAction: 'play'
     });
+    document.onkeydown = this.onKeyDown;
   }
 
   restartGame = () => {
@@ -119,26 +133,28 @@ class App extends Component {
     event = event || window.event;
     switch (event.keyCode) {
       case 38:
-        this.setState({ direction: 'UP' });
+        this.setState({direction: 'UP'});
         break;
       case 40:
-        this.setState({ direction: 'DOWN' });
+        this.setState({direction: 'DOWN'});
         break;
       case 37:
-        this.setState({ direction: 'LEFT' });
+        this.setState({direction: 'LEFT'});
         break;
       case 39:
-        this.setState({ direction: 'RIGHT' });
+        this.setState({direction: 'RIGHT'});
         break;
       case 78:
-        if(this.state.isGameStart){
-          this.restartGame();
-        }else{
-          this.startGame();
+        if (!this.state.isSettingsShow) {
+          if (this.state.isGameStart) {
+            this.restartGame();
+          } else {
+            this.startGame();
+          }
         }
         break;
       case 80:
-        if(this.state.isGameStart) {
+        if (this.state.isGameStart && !this.state.isSettingsShow) {
           if (this.state.isGamePause) {
             this.resumeGame();
           } else {
@@ -147,34 +163,42 @@ class App extends Component {
         }
         break;
       case 83:
-      if(this.state.isGameStart && this.state.isGamePause){
-        this.toggleShowSettings();
-      }
-        break;
-      case 72:
-        if(this.state.isGameStart && this.state.isGamePause){
-          this.toggleShowHotkeys();
+        if (this.state.isGameStart && this.state.isGamePause) {
+          this.toggleShowSettings();
         }
         break;
-      default:
-        this.setState({ direction: 'RIGHT' });
+      case 72:
+        if (this.state.isGameStart && this.state.isGamePause) {
+          this.toggleShowHotkeys();
+        }
         break;
     }
   }
 
-  onKeyDownHotkeys = (event) =>{
+  onKeyDownHotkeys = (event) => {
     event = event || window.event;
     switch (event.keyCode) {
       case 78:
-        this.startGame();
+        if (!this.state.isSettingsShow) {
+          this.startGame();
+        }
         break;
       case 83:
-        if(this.state.isGameStart && this.state.isGamePause){
-        this.toggleShowSettings();
+        if (this.state.isGameStart && this.state.isGamePause) {
+          this.toggleShowSettings();
+        }
+        break;
+      case 80:
+        if (this.state.isGameStart && !this.state.isSettingsShow) {
+          if (this.state.isGamePause) {
+            this.resumeGame();
+          } else {
+            this.pauseGame();
+          }
         }
         break;
       case 72:
-        if(this.state.isGameStart && this.state.isGamePause){
+        if (this.state.isGameStart && this.state.isGamePause) {
           this.toggleShowHotkeys();
         }
         break;
@@ -263,20 +287,74 @@ class App extends Component {
     this.setState({
       isGameStart: false,
       isScoreHidden: false,
-      soundAction: 'stop'
+      soundAction: 'stop',
+      intervalId: null
     });
+    this.addStatisticLine();
   }
 
   toggleShowSettings = () => {
-    this.setState(({ isSettingsShow }) => {
+    this.setState(({isSettingsShow}) => {
       return {
         isSettingsShow: !isSettingsShow
       };
     });
+    this.saveInLocalStorage();
+  }
+
+  saveInLocalStorage() {
+    localStorage.setItem('food', JSON.stringify(this.state.food));
+    localStorage.setItem('startSpeed', this.state.startSpeed);
+    localStorage.setItem('speed', this.state.speed);
+    localStorage.setItem('startSpeedRate', this.state.startSpeedRate);
+    localStorage.setItem('speedRate', this.state.speedRate);
+    localStorage.setItem('direction', this.state.direction);
+    localStorage.setItem('snakeDots', JSON.stringify(this.state.snakeDots));
+    localStorage.setItem('intervalId', this.state.intervalId);
+    localStorage.setItem('isSettingsShow', this.state.isSettingsShow);
+    localStorage.setItem('isGameStart', this.state.isGameStart);
+    localStorage.setItem('isGamePause', this.state.isGamePause);
+    localStorage.setItem('isScoreHidden', this.state.isScoreHidden);
+    localStorage.setItem('startBtnText', this.state.startBtnText);
+    localStorage.setItem('soundAction', this.state.soundAction);
+    localStorage.setItem('isPlayMusic', this.state.isPlayMusic);
+    localStorage.setItem('isPlaySoundEffect', this.state.isPlaySoundEffect);
+    localStorage.setItem('musicVolume', this.state.musicVolume);
+    localStorage.setItem('soundEffectVolume', this.state.soundEffectVolume);
+    localStorage.setItem('isHotkeysShow', this.state.isHotkeysShow);
+    localStorage.setItem('statisticData', JSON.stringify(this.state.statisticData));
+  }
+
+  readFromLocalStorage() {
+    this.setState(() => {
+      return {
+        food: JSON.parse(localStorage.getItem('food')),
+        startSpeed: Number(localStorage.getItem('startSpeed')),
+        speed: Number(localStorage.getItem('speed')),
+        startSpeedRate: Number(localStorage.getItem('startSpeedRate')),
+        speedRate: Number(localStorage.getItem('speedRate')),
+        direction: localStorage.getItem('direction'),
+        snakeDots: JSON.parse(localStorage.getItem('snakeDots')),
+        intervalId: null,
+        isSettingsShow: parseToBool(localStorage.getItem('isSettingsShow')),
+        isGameStart: parseToBool(localStorage.getItem('isGameStart')),
+        isGamePause: parseToBool(localStorage.getItem('isGamePause')),
+        isScoreHidden: parseToBool(localStorage.getItem('isScoreHidden')),
+        startBtnText: localStorage.getItem('startBtnText'),
+        soundAction: localStorage.getItem('soundAction'),
+        isPlayMusic: parseToBool(localStorage.getItem('isPlayMusic')),
+        isPlaySoundEffect: parseToBool(localStorage.getItem('isPlaySoundEffect')),
+        musicVolume: Number(localStorage.getItem('musicVolume')),
+        soundEffectVolume: Number(localStorage.getItem('soundEffectVolume')),
+        isHotkeysShow: parseToBool(localStorage.getItem('isHotkeysShow')),
+        statisticData: JSON.parse(localStorage.getItem('statisticData'))
+      };
+    });
+    this.pauseGame();
   }
 
   togglePlayMusic = () => {
-    this.setState(({ isPlayMusic }) => {
+    this.setState(({isPlayMusic}) => {
       return {
         isPlayMusic: !isPlayMusic
       };
@@ -284,7 +362,7 @@ class App extends Component {
   }
 
   togglePlaySoundEffect = () => {
-    this.setState(({ isPlaySoundEffect }) => {
+    this.setState(({isPlaySoundEffect}) => {
       return {
         isPlaySoundEffect: !isPlaySoundEffect
       };
@@ -292,7 +370,7 @@ class App extends Component {
   }
 
   toggleSpeed = () => {
-    this.setState( () => {
+    this.setState(() => {
       let newSpeedRate = document.querySelector("#speed").value;
       let newSpeed = 100 * newSpeedRate - (this.state.snakeDots.length * 10 - 20);
       return {
@@ -305,7 +383,7 @@ class App extends Component {
   }
 
   setMusicVolume = () => {
-    this.setState( () => {
+    this.setState(() => {
       return {
         musicVolume: document.querySelector("#musicVolume").value
       };
@@ -313,7 +391,7 @@ class App extends Component {
   }
 
   setSoundEffectVolume = () => {
-    this.setState( () => {
+    this.setState(() => {
       return {
         soundEffectVolume: document.querySelector("#soundEffectVolume").value
       };
@@ -321,12 +399,45 @@ class App extends Component {
   }
 
   toggleShowHotkeys = () => {
-    this.setState(({ isHotkeysShow }) => {
+    this.setState(({isHotkeysShow}) => {
       return {
         isHotkeysShow: !isHotkeysShow
       };
     });
-    console.log(this.state.isHotkeysShow);
+  }
+
+  calcEatenFood = () => {
+    return this.state.snakeDots.length - 2;
+  }
+
+  calcMaxSpeed = () => {
+    return (this.state.snakeDots.length * 10 - 10) * this.state.speedRate;
+  }
+
+  addStatisticLine = () => {
+    this.statisticLengthControl();
+
+    const newItem = {
+      eatenFood: this.calcEatenFood(),
+      maxSpeed: this.calcMaxSpeed(),
+    };
+
+    this.setState(({statisticData}) => {
+      const newArray = [
+        ...statisticData,
+        newItem
+      ];
+
+      return {
+        statisticData: newArray
+      };
+    });
+  }
+
+  statisticLengthControl = () => {
+    if (this.state.statisticData.length === 10) {
+      this.state.statisticData.splice(0, 1);
+    }
   }
 
   render() {
@@ -334,98 +445,95 @@ class App extends Component {
     const btnSoundEffectText = this.state.isPlaySoundEffect ? 'On' : 'Off';
 
     return (
-        <div className="app-wrapper">
-      <div className="main-block">
+      <div className="app-wrapper">
+        <div className="main-block">
+          <Sound action={this.state.soundAction}
+                 isPlayMusic={this.state.isPlayMusic}
+                 isPlaySoundEffect={this.state.isPlaySoundEffect}
+                 musicVolume={this.state.musicVolume}
+                 soundEffectVolume={this.state.soundEffectVolume}/>
 
-        <Sound action={this.state.soundAction}
-          isPlayMusic={this.state.isPlayMusic}
-          isPlaySoundEffect={this.state.isPlaySoundEffect}
-          musicVolume={this.state.musicVolume}
-          soundEffectVolume={this.state.soundEffectVolume} />
+          <div className="buttons-area">
+            <div className="buttonsMain-area">
+              <ButtonPauseGame
+                text={this.state.isGamePause ? " Resume game" : " Pause game"}
+                isHidden={!this.state.isGameStart || this.state.isSettingsShow}
+                gameAction={this.state.isGamePause ? this.resumeGame : this.pauseGame}/>
+              <ButtonTryAgain
+                text=' Try again'
+                isHidden={!this.state.isGameStart || this.state.isSettingsShow}
+                restartGame={this.restartGame}/>
+            </div>
 
-        <div className="buttons-area">
-
-          <div className="buttonsMain-area">
-            <ButtonPauseGame
-              text={this.state.isGamePause ? " Resume game" : " Pause game"}
-              isHidden={!this.state.isGameStart || this.state.isSettingsShow}
-              gameAction={this.state.isGamePause ? this.resumeGame : this.pauseGame}/>
-            <ButtonTryAgain
-              text=' Try again'
-              isHidden={!this.state.isGameStart || this.state.isSettingsShow}
-              restartGame={this.restartGame}/>
-          </div>
-
-          <div>
-            <ButtonSettings
+            <div>
+              <ButtonSettings
                 toggleShowSettings={this.toggleShowSettings}
                 isHidden={this.state.isGameStart && !this.state.isGamePause}
-                setMusicVolume={this.setMusicVolume} />
-            <Hotkeys
+                setMusicVolume={this.setMusicVolume}/>
+              <Hotkeys
                 toggleShowHotkeys={this.toggleShowHotkeys}
                 isHidden={this.state.isGameStart && !this.state.isGamePause}/>
-            <HotkeysDisplay
+              <HotkeysDisplay
                 isHotkeysShow={!this.state.isHotkeysShow}/>
+            </div>
           </div>
-
-        </div>
 
           <div className="currentDisplayAll">
             <CurrentDisplayFood
               isHidden={!this.state.isGameStart}
-              snakeDots={this.state.snakeDots.length - 2} />
+              snakeDots={this.calcEatenFood()}/>
             <MaxSpeed
               speedStyle="currentDisplayValue"
               isHidden={!this.state.isGameStart}
-              speed={(this.state.snakeDots.length * 10 - 10) * this.state.speedRate}/>
+              speed={this.calcMaxSpeed()}/>
           </div>
 
-        <DivSettings isSettingsShow={!this.state.isSettingsShow}
-          musicVolume={this.state.musicVolume}
-          soundEffectVolume={this.state.soundEffectVolume}
-          togglePlayMusic={this.togglePlayMusic}
-          btnMusicText={btnMusicText}
-          togglePlaySoundEffect={this.togglePlaySoundEffect}
-          btnSoundEffectText={btnSoundEffectText}
-          setMusicVolume={this.setMusicVolume}
-          setSoundEffectVolume={this.setSoundEffectVolume}
-          speedRate={this.state.speedRate}
-          toggleSpeed={this.toggleSpeed}/>
+          <Statistic statisticData={this.state.statisticData}/>
 
-        <div className="game-area" hidden={this.state.isSettingsShow}>
-          <Snake snakeDots={this.state.snakeDots} />
-          <Food dot={this.state.food} />
+          <DivSettings isSettingsShow={!this.state.isSettingsShow}
+                       musicVolume={this.state.musicVolume}
+                       soundEffectVolume={this.state.soundEffectVolume}
+                       togglePlayMusic={this.togglePlayMusic}
+                       btnMusicText={btnMusicText}
+                       togglePlaySoundEffect={this.togglePlaySoundEffect}
+                       btnSoundEffectText={btnSoundEffectText}
+                       setMusicVolume={this.setMusicVolume}
+                       setSoundEffectVolume={this.setSoundEffectVolume}
+                       speedRate={this.state.speedRate}
+                       toggleSpeed={this.toggleSpeed}/>
 
-          <div className="results">
-            <GameStateMessage
-              isHidden={this.state.isScoreHidden}
-              text={this.state.isGameStart ? "Pause..." : "Game Over!"}
-              collapseWarning={this.collapseWarning} />
+          <div className="game-area" hidden={this.state.isSettingsShow}>
+            <Snake snakeDots={this.state.snakeDots}/>
+            <Food dot={this.state.food}/>
 
-            <SnakeLength
-              isHidden={this.state.isScoreHidden || this.state.isGamePause}
-              snakeDots={this.state.snakeDots.length}
-              time={this.state.time} />
-            <MaxSpeed
-              speedStyle="gameOver"
-              isHidden={this.state.isScoreHidden || this.state.isGamePause}
-              speed={(this.state.snakeDots.length * 10 - 10) * this.state.speedRate}
-              time={this.state.time} />
-            <StartGame
-              // text=' Start a new game'
-              text={this.state.startBtnText}
-              isShow={this.state.isGameStart}
-              startGame={this.startGame}
-            />
+            <div className="results">
+              <GameStateMessage
+                isHidden={this.state.isScoreHidden}
+                text={this.state.isGameStart ? "Pause..." : "Game Over!"}
+                collapseWarning={this.collapseWarning}/>
+
+              <SnakeLength
+                isHidden={this.state.isScoreHidden || this.state.isGamePause}
+                snakeDots={this.state.snakeDots.length}
+                time={this.state.time}/>
+
+              <MaxSpeed
+                speedStyle="gameOver"
+                isHidden={this.state.isScoreHidden || this.state.isGamePause}
+                speed={this.calcMaxSpeed()}
+                time={this.state.time}/>
+
+              <StartGame
+                text={this.state.startBtnText}
+                isShow={this.state.isGameStart}
+                startGame={this.startGame}/>
+            </div>
           </div>
         </div>
-        </div>
-        <Footer />
+        <Footer/>
       </div>
-
     );
   }
-
 }
 
-export default App
+export default App;
